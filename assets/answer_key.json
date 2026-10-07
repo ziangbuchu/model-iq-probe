@@ -1,0 +1,50 @@
+{
+  "source": "https://linux.do/t/topic/2978609 (题目与参考答案来自帖子回复；2026-10-06 正版 GPT-6 Astra 两轮实测 25/25 一致)",
+  "sections": [
+    {"label": "GPT-4o", "cutoff": "2023-10-01", "questions": ["Q01"]},
+    {"label": "GPT-4.1", "cutoff": "2024-06-01", "questions": ["Q02", "Q03"]},
+    {"label": "GPT-5 / GPT-5.1", "cutoff": "2024-09-30", "questions": ["Q04", "Q05"]},
+    {"label": "GPT-5.2 / GPT-5.4", "cutoff": "2025-08-31", "questions": ["Q06", "Q07", "Q08", "Q09", "Q10"]},
+    {"label": "GPT-5.5", "cutoff": "2025-12-01", "questions": ["Q11", "Q12", "Q13", "Q14", "Q15"]},
+    {"label": "GPT-5.6", "cutoff": "2026-02-16", "questions": ["Q16", "Q17", "Q18", "Q19", "Q20"]},
+    {"label": "GPT-6 Astra", "cutoff": "2026-04-30", "questions": ["Q21", "Q22", "Q23", "Q24", "Q25"]}
+  ],
+  "questions": {
+    "Q01": {"date": "2023-09-09", "answer": "Coco Gauff", "match": [["gauff", "高芙", "高夫"]]},
+    "Q02": {"date": "2024-01-27", "answer": "Aryna Sabalenka", "match": [["sabalenka", "萨巴伦卡"]]},
+    "Q03": {"date": "2024-05-11", "answer": "Nemo", "match": [["nemo", "内莫"]]},
+    "Q04": {"date": "2024-07-14", "answer": "西班牙", "match": [["spain", "西班牙"]]},
+    "Q05": {"date": "2024-09-07", "answer": "Aryna Sabalenka", "match": [["sabalenka", "萨巴伦卡"]]},
+    "Q06": {"date": "2025-05-31", "answer": "巴黎圣日耳曼", "match": [["psg", "parissaintgermain", "巴黎圣日耳曼", "巴黎"]]},
+    "Q07": {"date": "2025-07-12", "answer": "Iga Świątek", "match": [["swiatek", "斯维亚特克", "斯维亚泰克", "斯瓦泰克", "施瓦泰克"]]},
+    "Q08": {"date": "2025-07-13", "answer": "切尔西", "match": [["chelsea", "切尔西"]]},
+    "Q09": {"date": "2025-07-29", "answer": "8.8", "match": [["8.8"]]},
+    "Q10": {"date": "2025-08-03", "answer": "Lando Norris", "match": [["norris", "诺里斯"]]},
+    "Q11": {"date": "2025-09-06", "answer": "Aryna Sabalenka", "match": [["sabalenka", "萨巴伦卡"]]},
+    "Q12": {"date": "2025-09-07", "answer": "Carlos Alcaraz", "match": [["alcaraz", "阿尔卡拉斯", "阿尔卡拉兹"]]},
+    "Q13": {"date": "2025-10-07", "answer": "John Clarke、Michel H. Devoret、John M. Martinis",
+            "match": [["clarke", "克拉克"], ["devoret", "德沃雷", "德沃莱"], ["martinis", "马蒂尼斯", "马丁尼斯"]]},
+    "Q14": {"date": "2025-10-08", "answer": "Susumu Kitagawa、Richard Robson、Omar M. Yaghi",
+            "match": [["kitagawa", "北川"], ["robson", "罗布森"], ["yaghi", "亚吉", "雅吉", "亚基"]]},
+    "Q15": {"date": "2025-11-01", "answer": "洛杉矶道奇", "match": [["dodgers", "道奇"]]},
+    "Q16": {"date": "2026-01-31", "answer": "Elena Rybakina", "match": [["rybakina", "莱巴金娜", "雷巴金娜", "里巴金娜"]]},
+    "Q17": {"date": "2026-02-01", "answer": "Carlos Alcaraz", "match": [["alcaraz", "阿尔卡拉斯", "阿尔卡拉兹"]]},
+    "Q18": {"date": "2026-02-01", "answer": "《DeBÍ TiRAR MáS FOToS》，Bad Bunny", "match": [["tirarmasfotos"]]},
+    "Q19": {"date": "2026-02-01", "answer": "《luther》，Kendrick Lamar、SZA", "match": [["luther"]]},
+    "Q20": {"date": "2026-02-08", "answer": "西雅图海鹰", "match": [["seahawks", "海鹰"]]},
+    "Q21": {"date": "2026-02-22", "answer": "《One Battle After Another》", "match": [["onebattleafteranother", "一战再战"]]},
+    "Q22": {"date": "2026-03-08", "answer": "George Russell", "match": [["russell", "拉塞尔"]]},
+    "Q23": {"date": "2026-03-15", "answer": "《One Battle After Another》", "match": [["onebattleafteranother", "一战再战"]]},
+    "Q24": {"date": "2026-03-15", "answer": "Michael B. Jordan", "match": [["jordan", "乔丹"]]},
+    "Q25": {"date": "2026-03-15", "answer": "Kimi Antonelli", "match": [["antonelli", "安东内利", "安东奈利"]]}
+  },
+  "expected_cutoff_by_model": [
+    ["gpt-?6", "2026-04-30"],
+    ["gpt-?5\\.6", "2026-02-16"],
+    ["gpt-?5\\.5", "2025-12-01"],
+    ["gpt-?5\\.[234]", "2025-08-31"],
+    ["gpt-?5(\\.1)?(\\b|-|$)", "2024-09-30"],
+    ["gpt-?4\\.1", "2024-06-01"],
+    ["gpt-?4o", "2023-10-01"]
+  ]
+}
