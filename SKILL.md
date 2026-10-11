@@ -25,6 +25,8 @@ description: 用 25 题知识探针检测模型 API 或 Codex 是否"降智"（�
 - `--expect-cutoff YYYY-MM-DD`：模型名不在 `answer_key.json` 的对照表里时，手动给出期望的知识截止日期。不给就只报知识边界，不下结论。
 - `--save DIR`：保存原始回答和判分 JSON。
 - `--show-raw`：打印原始回答。
+- `--user-agent`：请求一律用流式，User-Agent 默认模仿 `codex exec`，用来绕开 Cloudflare 对脚本 UA 的拦截（HTTP 403 / error code 1010）。如果仍然 403，换成浏览器 UA 或对方要求的 UA 再试。
+- 中转要求的模型名可能和用户说的简称不同（比如 `astra` 要写成 `gpt-6-astra`）。报 `model_not_found` 时先确认完整名称。
 
 用户没说测哪个 API 时，默认用 `--from-codex`。降智往往是穿插出现的，一次正常、一次降智，所以下结论至少跑 3 轮。用户只要快速看一眼时可以跑 1 轮，但要说明单轮不能代表稳定状态。
 

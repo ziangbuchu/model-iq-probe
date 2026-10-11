@@ -121,33 +121,76 @@ def load_codex_provider():
             "model": cfg.get("model"), "effort": cfg.get("model_reasoning_effort"), "key": key}
 
 
+# 很多中转挂在 Cloudflare 后面，会拦 Python-urllib 这类默认 UA（HTTP 403 / error code 1010），
+# 有的只放行 Codex 客户端，所以默认按 codex exec 的样子发请求头。
+DEFAULT_UA = "codex_exec/0.162.1 (Ubuntu 22.4.0; x86_64)"
+
+
 def call_api(a, prompt):
     base = a.base_url.rstrip("/")
+    # 一律流式：部分中转只收 stream=true，流式也更接近 Codex 的真实请求
     if a.api == "responses":
-        url, body = base + "/responses", {"model": a.model, "input": prompt}
+        url, body = base + "/responses", {"model": a.model, "input": prompt, "stream": True}
         if a.effort:
             body["reasoning"] = {"effort": a.effort}
     else:
         url = base + "/chat/completions"
-        body = {"model": a.model, "messages": [{"role": "user", "content": prompt}]}
+        body = {"model": a.model, "messages": [{"role": "user", "content": prompt}], "stream": True}
         if a.effort:
             body["reasoning_effort"] = a.effort
-    headers = {"Content-Type": "application/json", **a.headers}
+    headers = {"Content-Type": "application/json", "Accept": "text/event-stream",
+               "User-Agent": a.user_agent, "originator": "codex_exec", **a.headers}
     if a.key:
         headers["Authorization"] = f"Bearer {a.key}"
     req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=headers)
     try:
         with urllib.request.urlopen(req, timeout=a.timeout) as r:
-            data = json.loads(r.read().decode())
+            if "event-stream" not in r.headers.get("Content-Type", ""):
+                return parse_json_reply(a.api, json.loads(r.read().decode()))
+            return read_sse(a.api, r)
     except urllib.error.HTTPError as e:
-        raise RuntimeError(f"HTTP {e.code}: {e.read().decode(errors='replace')[:300]}") from None
-    if a.api == "chat":
+        msg = f"HTTP {e.code}: {e.read().decode(errors='replace')[:300]}"
+        if e.code == 403:
+            msg += "\n（可能是 Cloudflare 按 User-Agent 拦截，可用 --user-agent 换一个再试）"
+        raise RuntimeError(msg) from None
+
+
+def parse_json_reply(api, data):
+    if api == "chat":
         return data["choices"][0]["message"]["content"], data.get("model")
     if data.get("output_text"):
         return data["output_text"], data.get("model")
     parts = [c.get("text", "") for item in data.get("output", []) if item.get("type") == "message"
              for c in item.get("content", []) if c.get("type") == "output_text"]
     return "\n".join(parts), data.get("model")
+
+
+def read_sse(api, r):
+    out, model = [], None
+    for raw in r:
+        line = raw.decode(errors="replace").strip()
+        if not line.startswith("data:"):
+            continue
+        payload = line[5:].strip()
+        if payload == "[DONE]":
+            break
+        try:
+            e = json.loads(payload)
+        except json.JSONDecodeError:
+            continue
+        if api == "chat":
+            model = e.get("model") or model
+            for ch in e.get("choices", []):
+                out.append((ch.get("delta") or {}).get("content") or "")
+            continue
+        t = e.get("type")
+        if t == "response.output_text.delta":
+            out.append(e.get("delta", ""))
+        elif t in ("response.created", "response.completed"):
+            model = e.get("response", {}).get("model") or model
+        elif t in ("error", "response.failed"):
+            raise RuntimeError(f"流式返回错误：{payload[:300]}")
+    return "".join(out), model
 
 
 def call_codex(a, prompt):
@@ -219,6 +262,7 @@ def main():
     p.add_argument("--runs", type=int, default=1)
     p.add_argument("--parallel", type=int, default=3)
     p.add_argument("--timeout", type=int, default=900)
+    p.add_argument("--user-agent", default=DEFAULT_UA, help="请求的 User-Agent，默认模仿 codex exec")
     p.add_argument("--grade", metavar="FILE", help="只给已有回答判分（- 表示 stdin），不调用模型")
     p.add_argument("--save", metavar="DIR", help="把每轮原始回答和判分存成 JSON")
     p.add_argument("--show-raw", action="store_true")
